@@ -66,6 +66,8 @@ export default new Router()
                 grant_type: 'authorization_code'
             })
             .then( response => {
+
+                console.log('@@@@@response is ', response)
                 let googleToken = response.body.access_token;
                 console.log("(2) google token", googleToken); 
                 return googleToken;

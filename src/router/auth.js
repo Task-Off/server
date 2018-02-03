@@ -56,7 +56,8 @@ export default new Router()
         console.log('redirect uri is ', process.env.API_URL + 'oauth/google/code')
         
         // exchange the code or a token
-        superagent.post('https://www.googleapis.com/oauth2/v4/token')
+        // superagent.post('https://www.googleapis.com/oauth2/v4/token')
+        superagent.post('https://id.heroku.com/oauth/token')
             .type('form')
             .send({
                 code: code,
@@ -66,8 +67,6 @@ export default new Router()
                 grant_type: 'authorization_code'
             })
             .then( response => {
-
-                console.log('@@@@@response is ', response)
                 let googleToken = response.body.access_token;
                 console.log("(2) google token", googleToken); 
                 return googleToken;

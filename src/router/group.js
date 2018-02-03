@@ -3,11 +3,11 @@ import Group from '../model/group.js';
 import bodyParser from 'body-parser';
 import bearer from '../middleware/bearer-auth.js';
 import superagent from 'superagent';
-import user from '../model/user.js'
+import User from '../model/user.js'
 
 const groupRouter = module.exports = express.Router();
 
-groupRouter.post('/groups', (req, res, next) => {
+groupRouter.post('/groups', bearer, (req, res, next) => {
   console.log('create route hit successfully.')
 
   //this route accepts a post to create.
@@ -17,6 +17,7 @@ groupRouter.post('/groups', (req, res, next) => {
   group = new Group({name: req.body.name})
   group.save()
     .then( group => {
+
       User.findById(req.user._id)
         .then(user => {
           let groupIDs = user.group_IDs;
@@ -24,4 +25,5 @@ groupRouter.post('/groups', (req, res, next) => {
           user.save()
         })
     })
+    .catch(next)
 })

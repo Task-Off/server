@@ -10,11 +10,11 @@ taskRouter.get('/queue', (req, res, next) => {
   //get a list of tasks for the group
 })
 
-taskRouter.post('/queue', (req, res, next) => {
+taskRouter.post('/queue', bearer, (req, res, next) => {
   //post a new task
 })
 
-taskRouter.put('/queue', (req, res, next) => {
+taskRouter.put('/queue', bearer, (req, res, next) => {
   //update a task as completed/not completed
   //completed tasks get the user_ID in completedBy
   //uncompleted tasks have the user_ID removed.

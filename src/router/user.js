@@ -16,12 +16,13 @@ userRouter.get('/user', bearer, (req, res, next) => {
   else next();
 })
 
+
 //create route for adding a group_ID to the user
-userRouter.put('/groups'), (req, res, next) => {
+userRouter.put('/user/:group'), bearer, (req, res, next) => {
   //add a group ID to the user's list of IDs.
   //the ID comes from req.id
   //use User.findOneAndUpdate()
-  
+
 })
 
 

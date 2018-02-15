@@ -23,7 +23,6 @@ taskRouter.get('/tasks/:groupID', (req, res, next) => {
       if(tasks) res.send(tasks); 
     })
     .catch(next)
-  
 })
  
 //save a new task
@@ -54,8 +53,7 @@ taskRouter.put('/task/:id', bodyParser.json(), (req, res, next) => {
     "name": req.body.name,
     "group_ID": req.body.group_ID
   })
-   
-  //updating task
+   //updating task
    Task.findOne({_id:req.params.id})
    .then( task => {
      // console.log('task found:', task.name, 'req.body:::', req.body)
@@ -72,7 +70,7 @@ taskRouter.put('/task/:id', bodyParser.json(), (req, res, next) => {
           if(user){
             Object.assign(user, {completedTasks:[...user.completedTasks, req.body._id]});
             user.save();
-            console.log('user model after updating::::', user)
+            // console.log('user model after updating::::', user)
           }
         })
         .catch(err => console.log(err))
@@ -84,13 +82,11 @@ taskRouter.put('/task/:id', bodyParser.json(), (req, res, next) => {
             // console.log('use before uncheck:::', user)
             user.completedTasks = user.completedTasks.filter(task => {return task!==req.body._id})
             user.save();
-
-           console.log('user model after unchecking::::', user)
+          //  console.log('user model after unchecking::::', user)
           }
         })
         .catch(err => console.log(err))
   }
- 
 })
   
 taskRouter.delete('/task/:id',   (req, res, next) => {

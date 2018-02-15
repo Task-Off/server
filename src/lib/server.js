@@ -26,8 +26,6 @@ app.use('*', (req, res, next) => {
   next();
 });
 
-app.all('*', (req, res) => res.sendStatus(404))
-// global middleware
 app.use(morgan('dev'))
 
 // routers

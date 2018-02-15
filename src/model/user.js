@@ -9,7 +9,7 @@ import {promisify} from '../lib/promisify.js';
 import Mongoose, {Schema} from 'mongoose';
 
 // SCHEMA
-const userSchema =    new Schema({
+const userSchema = new Schema({
     email: {type: String, required: true, unique: true},
     username: {type: String, required: true, unique: true},
     passwordHash: {type: String},

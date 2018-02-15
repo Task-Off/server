@@ -11,6 +11,7 @@ import userRouter from '../router/user.js'
 import groupRouter from '../router/group.js'
 import taskRouter from '../router/task.js'
 import fourOhFour from '../middleware/four-oh-four.js'
+import statsRouter from '../router/stats.js'
 import errorHandler from '../middleware/error-middleware.js'
 
 // STATE
@@ -25,6 +26,7 @@ app.use('*', (req, res, next) => {
   next();
 });
 
+app.all('*', (req, res) => res.sendStatus(404))
 // global middleware
 app.use(morgan('dev'))
 
@@ -34,6 +36,7 @@ app.use(userRouter)
 app.use(authRouter)
 app.use(groupRouter)
 app.use(taskRouter)
+// app.use(statsRouter)
 
 
 

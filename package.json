@@ -8,8 +8,9 @@
     "start": "node index.js",
     "watch": "nodemon index.js",
     "test": "jest --runInBand",
-    "test-watch": "jest --watch --runInBand"
-   
+    "test-watch": "jest --watch --runInBand",
+    "mongo-on": "mkdir -p ./db && mongod --dbpath ./db --smallfiles",
+    "mongo-off": "killall mongod"
   },
   "repository": {
     "type": "git",
@@ -37,7 +38,6 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "expect": "^22.2.0",
     "faker": "^4.1.0",
     "jest": "^20.0.4",
     "live-server": "^1.2.0",

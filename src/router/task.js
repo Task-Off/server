@@ -28,7 +28,7 @@ taskRouter.get('/tasks/:groupID', (req, res, next) => {
 //save a new task
 taskRouter.post('/task',  bodyParser.json(), (req, res, next) => {
 
-  if(!req.body) next(400);
+  if(!req.body.name) next(400);
 
   let groupID = req.body.group_ID;
 

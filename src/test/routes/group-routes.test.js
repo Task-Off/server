@@ -48,7 +48,7 @@ describe("Group router ", ()=>{
     testGroup.save();
    
     it ('POST should respond with 400 if no body', ()=>{
-        superagent
+        return superagent
         .post(`API`)
         .set('Authorization', `Bearer ${token}`,{'content-type':'application/json'})
         .send({})
@@ -58,7 +58,7 @@ describe("Group router ", ()=>{
     })
 
     it('POST should return user with the group data assigned, if the group name is provided', () => {
-        superagent
+        return superagent
         .post(`${API}/post`)
         .set('Authorization', `Bearer ${token}`)
         .set({'content-type':'application/json'})
@@ -76,16 +76,16 @@ describe("Group router ", ()=>{
         })
     }) 
 
-    // it('DELETE should delete group or unsubscribe user provided groupID and userID', () => {  
-    //     superagent
-    //     .delete(`${API}/delete/${testGroup._id}`)
-    //     .set('Authorization', `Bearer ${token}`)
-    //     .set({'content-type':'application/json'})
-    //     .send({'id':testUser._id})
-    //     .end((err,res)=>{
+    it('DELETE should delete group or unsubscribe user provided groupID and userID', () => {  
+        return superagent
+        .delete(`${API}/delete/${testGroup._id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .set({'content-type':'application/json'})
+        .send({'id':testUser._id})
+        .end((err,res)=>{
           
-    //         mongoose.disconnect();
-    //     })
-    // })   
+            mongoose.disconnect();
+        })
+    })   
     mongoose.disconnect(); 
 })

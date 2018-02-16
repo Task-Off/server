@@ -1,5 +1,5 @@
 'use strict';
-const PORT = 5000;
+const PORT;
 require('dotenv').config();
 import express,{Router} from 'express';
 import mongoose from 'mongoose';
@@ -45,7 +45,7 @@ describe('Task router:', ()=>{
     let idForGet;
     let groupID = '5a7a04a22a1b52cf493006dc';
     it('post should respond with the body content for a post request with a valid body',()=>{
-        superagent 
+         return superagent 
         .post(`http://localhost:${PORT}/task`)
         // .set({'Content-Type':'application/json'})
         .send({'name':'test task', 'group_ID':groupID})
@@ -61,7 +61,7 @@ describe('Task router:', ()=>{
 
     it ('GET tasks should return a list of tasks with a group ID', ()=>{
         
-        superagent
+        return superagent
         .get(`http://localhost:${PORT}/tasks/${groupID}`)
         .end((err, res) => {
             expect(res.body).not.toBe(null);
@@ -70,7 +70,7 @@ describe('Task router:', ()=>{
     })
 
     it ('PUT should update a record in db', ()=>{  
-        superagent
+        return superagent
         .put(`http://localhost:${PORT}/task`)
         .set({"Content-Type":"application/json"})
         .send({'completedBy':`iryna`})
@@ -85,12 +85,12 @@ describe('Task router:', ()=>{
     })
 
     it ('DELETE  should delete a record in db', ()=>{
-        superagent
+        return superagent
         .post(`http://localhost:${PORT}/task`)
         .set({'Content-Type':'application/json'})
         .send({'name':'test task two', 'group_ID':groupID})
         .then(res =>{
-            superagent
+            return superagent
             .delete
             (`http://localhost:${PORT}/task/${res.task._id}`)
             .then(res=>{

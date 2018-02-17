@@ -1,11 +1,12 @@
 'use strict';
-const PORT;
+const PORT = 5000;
 require('dotenv').config();
 import express,{Router} from 'express';
 import mongoose from 'mongoose';
 import expect from 'expect';
 import superagent from 'superagent';
 import Task from '../../model/task';
+import Group from '../../model/group';
 import taskRouter from '../../router/task';
 
 mongoose.Promise = require('bluebird');
@@ -29,12 +30,16 @@ afterAll(()=>{
 })
 
 describe('Task router:', ()=>{
+    let taskID='';
+    let group = new Group({name:"testGroup"})
+    let groupID = group._id;
+    group.save();
 
     it('should respond with a 404 for unregistered paths ',()=>{
         return superagent
         .post(`localhost:${PORT}/si`)
         .set({"Content-Type":"application/json"})
-        .send({"name":"test"})
+        .send({name:"test"})
         .then(Promise.reject)
         .catch(res=>{
             expect(res.status).toEqual(404);
@@ -42,65 +47,60 @@ describe('Task router:', ()=>{
         })
     })
 
-    let idForGet;
-    let groupID = '5a7a04a22a1b52cf493006dc';
     it('post should respond with the body content for a post request with a valid body',()=>{
-         return superagent 
+        return superagent 
         .post(`http://localhost:${PORT}/task`)
-        // .set({'Content-Type':'application/json'})
-        .send({'name':'test task', 'group_ID':groupID})
-        .then((res) => {
-            console.log('in post, res::::::::::::: ' , res.body)
+        .set({'Content-Type':'application/json'})
+        .send({name:'test task', group_ID:groupID})
+        .then(res => {
+            // console.log("POST::::", res.body)
             expect(res.body.name).toBe('test task');
-            expect(res.body.group_ID).toBe(groupID)
-            idForGet = res.body.id;
+            // expect(res.body.group_ID).toBe(groupID);
+            taskID = res.body._id;
         })
-        .catch(err=> console.log(err.message))
-        // .catch(err => console.log(err))
+        .catch(err => console.log("in post:::::", err.message))
     })
 
     it ('GET tasks should return a list of tasks with a group ID', ()=>{
-        
         return superagent
         .get(`http://localhost:${PORT}/tasks/${groupID}`)
-        .end((err, res) => {
-            expect(res.body).not.toBe(null);
-            expect(res.body.groupID).toEqual(groupID)
+        .then(res => {
+            // console.log("in get::: res.body[0]", res.body[0])
+            expect(res.body).not.toBe(undefined);
+            expect(res.body[0].group_ID).toEqual(groupID)
+            expect(res.body[0].name).toBe('test task')
+        })
+        .catch(err=>{
+            console.log('in put:::', err)
         })
     })
 
     it ('PUT should update a record in db', ()=>{  
+        let id = taskID;
         return superagent
-        .put(`http://localhost:${PORT}/task`)
+        .put(`http://localhost:${PORT}/task/${id}`)
         .set({"Content-Type":"application/json"})
-        .send({'completedBy':`iryna`})
-            .then(()=>{
-                superagent
-                .get(`http://localhost:${PORT}/tasks/${groupID}`)
-                .end((err, res) => {
-                expect(res.body).not.toBe(null);
-                expect(res.body.completedBy).toEqual('hello')
+        .send({name:`edited task`, group_ID:groupID})
+            .then( res =>{
+                // console.log('in put::::', res.body)
+                expect(res.body.name).toEqual('edited task')
             })
-        })   
+            .catch(()=>{
+                console.log('id:::', id)})  
     })
 
     it ('DELETE  should delete a record in db', ()=>{
-        return superagent
-        .post(`http://localhost:${PORT}/task`)
-        .set({'Content-Type':'application/json'})
-        .send({'name':'test task two', 'group_ID':groupID})
-        .then(res =>{
             return superagent
             .delete
-            (`http://localhost:${PORT}/task/${res.task._id}`)
+            (`http://localhost:${PORT}/task/${taskID}`)
             .then(res=>{
-                console.log(res.body)
+                // console.log(res.body)
                 expect (res.text).toEqual("Success!")
                 mongoose.disconnect();
             })
             .catch(()=>{
                 mongoose.disconnect();
             })
-        })
     })
+     mongoose.disconnect();
 })

@@ -20,11 +20,11 @@ server.use((err, req, res, next ) => {
 })
 
 const API = 'http://localhost:5000/group';
-let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
-
+// const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
+const token = '';
 beforeAll(()=>{
-    // server.listen(PORT);
-    mongoose.connect(process.env.MONGODB_URI)
+    server.listen(PORT);
+    mongoose.connect(process.env.MONGODB_URI);
 })
 
 afterAll(()=>{
@@ -33,7 +33,7 @@ afterAll(()=>{
 })
 
 describe("Group router ", ()=>{
-    
+
     let testUser = new User({
         username: "testUser",
         email:"testUser1@gmail.com"
@@ -42,27 +42,28 @@ describe("Group router ", ()=>{
     let userIdToUse = testUser._id;
 
     let testGroup = new Group({
-        name: "testGroup",
-        alias:"some-unique-alias"
+        name: "testGroup"
     });
     testGroup.save();
    
     it ('POST should respond with 400 if no body', ()=>{
         return superagent
-        .post(`API`)
+        .post(`${API}`)
         .set('Authorization', `Bearer ${token}`,{'content-type':'application/json'})
         .send({})
-        .end((err, res) => {
-            expect(err.status).toNotEqual(undefined);
+        .then(Promise.reject)
+        .catch(res=>{
+            expect(res.status).toEqual(400);
+            expect(res.message).toBe('Bad Request')
         })
     })
 
     it('POST should return user with the group data assigned, if the group name is provided', () => {
         return superagent
-        .post(`${API}/post`)
+        .post(`${API}`)
         .set('Authorization', `Bearer ${token}`)
         .set({'content-type':'application/json'})
-        .send({"name": "testGroup", "alias": "some-unique-alias", "createdBy":userIdToUse, "user_IDs": userIdToUse})
+        .send({"name": "testGroup", "createdBy":userIdToUse, "user_IDs": userIdToUse})
         .then(res => {
           console.log("testUser is: ", testUser)
           console.log("Users groups:  ", testUser.groupNames);
@@ -77,7 +78,7 @@ describe("Group router ", ()=>{
     }) 
 
     it('DELETE should delete group or unsubscribe user provided groupID and userID', () => {  
-        return superagent
+        superagent
         .delete(`${API}/delete/${testGroup._id}`)
         .set('Authorization', `Bearer ${token}`)
         .set({'content-type':'application/json'})
